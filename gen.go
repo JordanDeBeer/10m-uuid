@@ -29,11 +29,10 @@ func Producer(numWorkers int, uuidFunc func() uuid.UUID) (chan uuid.UUID, *sync.
 	}
 	for w := 0; w != numWorkers; w++ {
 		wg.Add(1)
-		if w+1 != numWorkers {
-			go f(idsPerGoroutine)
-		} else {
-			go f(idsPerGoroutine + remainder)
+		if w+1 == numWorkers {
+			idsPerGoroutine += remainder
 		}
+		go f(idsPerGoroutine)
 	}
 	go func() {
 		wg.Wait()
